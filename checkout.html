@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата PushComment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #ffffff;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        main.checkout-card {
+            position: relative;
+            z-index: 3;
+        }
+
+        .checkout-card {
+            width: min(440px, 100%);
+            padding: 48px 40px;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+            background: #ffffff;
+        }
+
+        .checkout-card h1 {
+            margin: 0 0 8px;
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .checkout-card p.price {
+            margin: 0 0 28px;
+            font-size: 20px;
+            font-weight: 500;
+            color: #2563eb;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        #cursor-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #parallax-blob {
+            position: fixed;
+            inset: auto auto 12% -10%;
+            width: 60vmax;
+            height: 60vmax;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(246, 199, 106, 0.18), rgba(246, 199, 106, 0.06) 42%, transparent 70%);
+            filter: blur(45px);
+            pointer-events: none;
+            z-index: 1;
+            transform: translate3d(0, 0, 0);
+        }
+
+        #custom-cursor {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid rgba(246, 199, 106, 0.52);
+            background: radial-gradient(closest-side, rgba(246, 199, 106, 0.2), rgba(246, 199, 106, 0) 70%);
+            box-shadow: 0 0 18px rgba(246, 199, 106, 0.32), 0 0 32px rgba(246, 199, 106, 0.18);
+            pointer-events: none;
+            z-index: 4;
+            transform: translate3d(-9999px, -9999px, 0);
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pay-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .note {
+            margin: 22px 0 18px;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        .documents {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .documents a {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .documents a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .checkout-card {
+                padding: 36px 24px;
+            }
+
+            .checkout-card h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="cursor-canvas" aria-hidden="true"></canvas>
+    <div id="parallax-blob" aria-hidden="true"></div>
+    <div id="custom-cursor" aria-hidden="true"></div>
+    <main class="checkout-card">
+        <h1>PushComment — лицензия навсегда</h1>
+        <p class="price">11&nbsp;500&nbsp;₽</p>
+        <form class="checkout-form" action="https://self.payanyway.ru/17611422360570" method="get">
+            <div class="form-group">
+                <label for="customer-name">Имя (необязательно)</label>
+                <input id="customer-name" type="text" name="name" placeholder="Ваше имя">
+            </div>
+            <div class="form-group">
+                <label for="contact">Email или Telegram (необязательно)</label>
+                <input id="contact" type="text" name="contact" placeholder="you@example.com или @username">
+            </div>
+            <a class="pay-button" href="https://self.payanyway.ru/17611422360570" target="_blank" rel="noopener">Перейти к оплате</a>
+        </form>
+        <p class="note">✅ Нажмите «Перейти к оплате», чтобы перейти на защищенную страницу PayAnyWay.</p>
+        <div class="documents">
+            <a href="docs/polozhenie.pdf" target="_blank" rel="noopener">📄 Документ "Положение"</a>
+            <a href="docs/soglasie.pdf" target="_blank" rel="noopener">📄 Документ "Согласие"</a>
+        </div>
+    </main>
+    <script>
+        // Форма стала статичным переходом на PayAnyWay, скрипт не требуется
+    </script>
+    <script src="main.js"></script>
+    <script>
+        if (window.initCursorEffect) {
+            window.initCursorEffect({ density: 0.6, enabled: false });
+        }
+    </script>
+</body>
+</html>
